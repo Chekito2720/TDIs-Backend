@@ -1,0 +1,1 @@
+-- Datos iniciales movidos a catalogo-service/src/main/resources/data.sql
