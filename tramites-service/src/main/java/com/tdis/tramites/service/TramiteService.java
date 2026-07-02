@@ -66,6 +66,23 @@ public class TramiteService {
         Solicitud solicitud = new Solicitud();
         solicitud.setAlumnoId(alumnoId);
         solicitud.setActividadId(request.getActividadId());
+        solicitud.setTipoSolicitud(request.getTipoSolicitud());
+        solicitud.setDescripcion(request.getDescripcion());
+        solicitud.setReflexion(request.getReflexion());
+        solicitud.setLugar(request.getLugar());
+        solicitud.setHoras(request.getHoras());
+        solicitud.setTipoActividad(request.getTipoActividad());
+        solicitud.setMateriaRelacionada(request.getMateriaRelacionada());
+        solicitud.setDivision(request.getDivision());
+        solicitud.setPrograma(request.getPrograma());
+        solicitud.setGrupo(request.getGrupo());
+        solicitud.setCuatrimestre(request.getCuatrimestre());
+        solicitud.setTurno(request.getTurno());
+        solicitud.setTutor(request.getTutor());
+        solicitud.setNombreResponsable(request.getNombreResponsable());
+        solicitud.setCargoResponsable(request.getCargoResponsable());
+        solicitud.setTelefonoResponsable(request.getTelefonoResponsable());
+        solicitud.setCorreoResponsable(request.getCorreoResponsable());
         solicitud.setEstado(EstadoSolicitud.EN_REVISION);
 
         solicitud = solicitudRepository.save(solicitud);
@@ -88,10 +105,6 @@ public class TramiteService {
             solicitud.setComentarioRechazo(request.getComentario());
         }
 
-        if (request.getEstado() == EstadoSolicitud.RECHAZADA && solicitud.getArchivoPath() != null) {
-            // El archivo se elimina via el client si es necesario
-        }
-
         solicitud.setEstado(request.getEstado());
         solicitud = solicitudRepository.save(solicitud);
         return toDTO(solicitud);
@@ -103,23 +116,40 @@ public class TramiteService {
                 .collect(Collectors.toList());
     }
 
-    public long contarAprobadas(UUID alumnoId) {
-        return solicitudRepository.countByAlumnoIdAndEstado(alumnoId, EstadoSolicitud.APROBADA);
-    }
-
     private SolicitudDTO toDTO(Solicitud solicitud) {
         SolicitudDTO dto = new SolicitudDTO();
         dto.setId(solicitud.getId());
         dto.setAlumnoId(solicitud.getAlumnoId());
+        dto.setTipoSolicitud(solicitud.getTipoSolicitud());
         dto.setActividadId(solicitud.getActividadId());
+        dto.setDescripcion(solicitud.getDescripcion());
+        dto.setReflexion(solicitud.getReflexion());
+        dto.setLugar(solicitud.getLugar());
+        dto.setHoras(solicitud.getHoras());
+        dto.setTipoActividad(solicitud.getTipoActividad());
+        dto.setMateriaRelacionada(solicitud.getMateriaRelacionada());
+        dto.setDivision(solicitud.getDivision());
+        dto.setPrograma(solicitud.getPrograma());
+        dto.setGrupo(solicitud.getGrupo());
+        dto.setCuatrimestre(solicitud.getCuatrimestre());
+        dto.setTurno(solicitud.getTurno());
+        dto.setTutor(solicitud.getTutor());
+        dto.setNombreResponsable(solicitud.getNombreResponsable());
+        dto.setCargoResponsable(solicitud.getCargoResponsable());
+        dto.setTelefonoResponsable(solicitud.getTelefonoResponsable());
+        dto.setCorreoResponsable(solicitud.getCorreoResponsable());
         dto.setEstado(solicitud.getEstado());
         dto.setComentarioRechazo(solicitud.getComentarioRechazo());
         dto.setArchivoPath(solicitud.getArchivoPath());
+        dto.setNombreArchivo(solicitud.getNombreArchivo());
         dto.setCreatedAt(solicitud.getCreatedAt());
+        dto.setUpdatedAt(solicitud.getUpdatedAt());
 
         try {
             ActividadDTO actividad = catalogoClient.obtenerActividad(solicitud.getActividadId());
             dto.setActividadTitulo(actividad.getTitulo());
+            dto.setActividadEje(actividad.getEje().name());
+            dto.setActividadPuntos(actividad.getPuntosTdi());
         } catch (Exception e) {
             dto.setActividadTitulo("Actividad no disponible");
         }

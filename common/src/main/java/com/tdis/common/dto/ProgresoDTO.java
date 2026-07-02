@@ -13,10 +13,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProgresoDTO {
     private UUID alumnoId;
+    private String alumnoMatricula;
     private String alumnoNombre;
     private Integer puntosTotales;
     private NivelProgreso nivelActual;
     private Map<String, Integer> puntosPorEje;
     private Long actividadesCompletadas;
     private Long actividadesEnRevision;
+    private Integer puntosSiguienteNivel;
+    private Integer porcentajeProgreso;
 }

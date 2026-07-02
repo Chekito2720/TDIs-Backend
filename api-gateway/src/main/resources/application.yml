@@ -6,55 +6,8 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin
       globalcors:
-        cors-configurations:
-          '[/**]':
-            allowed-origins: "http://localhost:4200"
-            allowed-methods: "*"
-            allowed-headers: "*"
-            allow-credentials: true
-      routes:
-        - id: usuarios-service
-          uri: lb://usuarios-service
-          predicates:
-            - Path=/api/auth/**, /api/usuarios/**
-          filters:
-            - name: JwtAuthFilter
-
-        - id: catalogo-service
-          uri: lb://catalogo-service
-          predicates:
-            - Path=/api/catalogo/**
-          filters:
-            - name: JwtAuthFilter
-
-        - id: tramites-service
-          uri: lb://tramites-service
-          predicates:
-            - Path=/api/solicitudes/**
-          filters:
-            - name: JwtAuthFilter
-
-        - id: progreso-service
-          uri: lb://progreso-service
-          predicates:
-            - Path=/api/progreso/**
-          filters:
-            - name: JwtAuthFilter
-
-        - id: documentos-service
-          uri: lb://documentos-service
-          predicates:
-            - Path=/api/documentos/**
-          filters:
-            - name: JwtAuthFilter
-
-        - id: auth-open
-          uri: lb://usuarios-service
-          predicates:
-            - Path=/api/auth/login
+        add-to-simple-url-handler-mapping: true
 
 eureka:
   client:

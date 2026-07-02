@@ -28,7 +28,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
-            if (path.contains("/api/auth/login")) {
+            if (path.contains("/api/auth/login") || "OPTIONS".equals(exchange.getRequest().getMethod().name())) {
                 return chain.filter(exchange);
             }
 

@@ -19,4 +19,9 @@ public class ProgresoController {
     public ResponseEntity<ProgresoDTO> obtenerProgreso(@PathVariable UUID alumnoId) {
         return ResponseEntity.ok(progresoService.calcularProgreso(alumnoId));
     }
+
+    @GetMapping("/matricula/{matricula}")
+    public ResponseEntity<ProgresoDTO> obtenerProgresoPorMatricula(@PathVariable String matricula) {
+        return ResponseEntity.ok(progresoService.calcularProgresoPorMatricula(matricula));
+    }
 }

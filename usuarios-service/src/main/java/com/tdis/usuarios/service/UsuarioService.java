@@ -38,7 +38,8 @@ public class UsuarioService {
             }
 
             String token = jwtTokenProvider.generateToken(alumno.getId(), alumno.getTipoUsuario());
-            return new LoginResponse(token, alumno.getId(), alumno.getNombre(), alumno.getApellidos(), alumno.getTipoUsuario());
+            LoginResponse response = new LoginResponse(token, alumno.getId(), alumno.getMatricula(), null, alumno.getNombre(), alumno.getApellidos(), alumno.getTipoUsuario());
+            return response;
         }
 
         Usuario admin = usuarioRepository.findByEmail(credencial)
@@ -53,7 +54,8 @@ public class UsuarioService {
         }
 
         String token = jwtTokenProvider.generateToken(admin.getId(), admin.getTipoUsuario());
-        return new LoginResponse(token, admin.getId(), admin.getNombre(), admin.getApellidos(), admin.getTipoUsuario());
+        LoginResponse response = new LoginResponse(token, admin.getId(), null, admin.getEmail(), admin.getNombre(), admin.getApellidos(), admin.getTipoUsuario());
+        return response;
     }
 
     public UsuarioDTO crearUsuario(UsuarioDTO dto, String password) {
