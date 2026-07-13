@@ -49,7 +49,9 @@ public class CatalogoService {
         actividad.setDescripcion(dto.getDescripcion());
         actividad.setEje(dto.getEje());
         actividad.setPuntosTdi(dto.getPuntosTdi());
-        actividad.setTemporalidad(dto.getTemporalidad());
+        actividad.setPeriodicidad(dto.getPeriodicidad());
+        actividad.setFechaInicio(dto.getFechaInicio());
+        actividad.setFechaFin(dto.getFechaFin());
         actividad.setActiva(true);
         actividad = actividadRepository.save(actividad);
         return toDTO(actividad);
@@ -62,7 +64,9 @@ public class CatalogoService {
         actividad.setDescripcion(dto.getDescripcion());
         actividad.setEje(dto.getEje());
         actividad.setPuntosTdi(dto.getPuntosTdi());
-        actividad.setTemporalidad(dto.getTemporalidad());
+        actividad.setPeriodicidad(dto.getPeriodicidad());
+        actividad.setFechaInicio(dto.getFechaInicio());
+        actividad.setFechaFin(dto.getFechaFin());
         actividad = actividadRepository.save(actividad);
         return toDTO(actividad);
     }
@@ -88,8 +92,11 @@ public class CatalogoService {
                 actividad.getDescripcion(),
                 actividad.getEje(),
                 actividad.getPuntosTdi(),
-                actividad.getTemporalidad(),
-                actividad.getActiva()
+                actividad.getPeriodicidad(),
+                actividad.getFechaInicio(),
+                actividad.getFechaFin(),
+                actividad.getActiva(),
+                actividad.getCreatedAt()
         );
     }
 }

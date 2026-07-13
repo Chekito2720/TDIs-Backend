@@ -1,8 +1,8 @@
 package com.tdis.common.enums;
 
 public enum NivelProgreso {
-    SENSIBILIZADOR,
-    FORMATIVO,
-    APLICATIVO,
-    IMPLEMENTADOR
+    EXPLORADOR,
+    PROMOTOR,
+    LIDER,
+    EMBAJADOR
 }

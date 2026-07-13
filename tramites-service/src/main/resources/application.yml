@@ -1,9 +1,17 @@
 server:
   port: 8083
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
 
 spring:
   application:
     name: tramites-service
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
   datasource:
     url: jdbc:postgresql://localhost:5432/tdis_tramites
     username: postgres
@@ -17,6 +25,8 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  mvc:
+    throw-exception-if-no-handler-found: true
 
 eureka:
   client:
@@ -24,3 +34,14 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 3000
+        read-timeout: 5000
+
+n8n:
+  webhook:
+    url: http://192.168.1.160:5678/webhook-test/3df73d6f-6d77-4cda-9ccd-5bf25a85a17f

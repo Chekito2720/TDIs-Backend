@@ -2,7 +2,7 @@ package com.tdis.common.enums;
 
 public enum EjeFormativo {
     ENTORNO_SOCIAL,
-    CULTURAL,
+    PERSONAL,
     DEPORTIVO,
     TRASCENDENCIA
 }

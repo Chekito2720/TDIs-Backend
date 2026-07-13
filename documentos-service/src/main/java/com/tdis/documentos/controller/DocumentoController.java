@@ -30,10 +30,11 @@ public class DocumentoController {
     @GetMapping("/download/{solicitudId}")
     public ResponseEntity<Resource> descargarArchivo(@PathVariable UUID solicitudId) {
         Resource resource = documentoService.descargarArchivo(solicitudId);
+        String mimeType = documentoService.obtenerMimeType(solicitudId);
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
+                .contentType(MediaType.parseMediaType(mimeType))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
+                        "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 

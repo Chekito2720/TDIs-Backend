@@ -28,7 +28,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
-            if (path.contains("/api/auth/login") || "OPTIONS".equals(exchange.getRequest().getMethod().name())) {
+            if (path.contains("/api/auth/login") || path.contains("/api/auth/register") || "OPTIONS".equals(exchange.getRequest().getMethod().name())) {
                 return chain.filter(exchange);
             }
 
@@ -45,9 +45,12 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
                         .parseSignedClaims(token)
                         .getPayload();
 
-                exchange.getRequest().mutate()
+                var mutatedRequest = exchange.getRequest().mutate()
                         .header("X-User-Id", claims.getSubject())
-                        .header("X-User-Type", claims.get("tipo", String.class));
+                        .header("X-User-Type", claims.get("tipo", String.class))
+                        .build();
+
+                exchange = exchange.mutate().request(mutatedRequest).build();
             } catch (Exception e) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalido");
             }

@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -39,6 +40,11 @@ public class DocumentoService {
         }
     }
 
+    private static final Set<String> MIME_PERMITIDOS = Set.of(
+            "image/png",
+            "image/jpeg"
+    );
+
     @Transactional
     public String subirArchivo(UUID solicitudId, MultipartFile archivo) {
         if (archivo.isEmpty()) {
@@ -46,8 +52,8 @@ public class DocumentoService {
         }
 
         String contentType = archivo.getContentType();
-        if (contentType == null || !contentType.equals("application/pdf")) {
-            throw new BadRequestException("Solo se permiten archivos PDF");
+        if (contentType == null || !MIME_PERMITIDOS.contains(contentType)) {
+            throw new BadRequestException("Solo se permiten imagenes PNG o JPG");
         }
 
         if (archivo.getSize() > 10 * 1024 * 1024) {
@@ -74,7 +80,7 @@ public class DocumentoService {
             archivoEntity.setNombreOriginal(nombreOriginal);
             archivoEntity.setNombreAlmacenado(nombreAlmacenado);
             archivoEntity.setTamano(archivo.getSize());
-            archivoEntity.setMimeType("application/pdf");
+            archivoEntity.setMimeType(contentType);
             archivoRepository.save(archivoEntity);
 
             return nombreAlmacenado;
@@ -98,6 +104,12 @@ public class DocumentoService {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error al acceder al archivo", e);
         }
+    }
+
+    public String obtenerMimeType(UUID solicitudId) {
+        Archivo archivo = archivoRepository.findBySolicitudId(solicitudId)
+                .orElseThrow(() -> new ResourceNotFoundException("No hay archivo para esta solicitud"));
+        return archivo.getMimeType() != null ? archivo.getMimeType() : "application/octet-stream";
     }
 
     @Transactional

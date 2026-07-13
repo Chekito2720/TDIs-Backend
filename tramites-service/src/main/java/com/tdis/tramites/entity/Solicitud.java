@@ -90,6 +90,15 @@ public class Solicitud {
     @Column(name = "nombre_archivo", length = 255)
     private String nombreArchivo;
 
+    @Column(name = "ai_estado", length = 30)
+    private String aiEstado;
+
+    @Column(name = "ai_motivo", columnDefinition = "TEXT")
+    private String aiMotivo;
+
+    @Column(name = "ai_descripcion_analisis", columnDefinition = "TEXT")
+    private String aiDescripcionAnalisis;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

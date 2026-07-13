@@ -41,6 +41,9 @@ public class SolicitudDTO {
     private EstadoSolicitud estado;
     private String comentarioRechazo;
     private String archivoPath;
+    private String aiEstado;
+    private String aiMotivo;
+    private String aiDescripcionAnalisis;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

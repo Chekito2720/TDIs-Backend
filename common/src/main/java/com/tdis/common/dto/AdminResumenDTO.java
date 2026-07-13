@@ -15,7 +15,7 @@ public class AdminResumenDTO {
     private long actividadesAprobadas;
     private long actividadesRechazadas;
     private int puntosDistribuidos;
-    private Map<String, Long> distribucionNiveles;
+    private Map<String, Integer> distribucionNiveles;
     private Map<String, Integer> puntosPorEje;
     private List<AlumnoResumenDTO> topAlumnos;
 }

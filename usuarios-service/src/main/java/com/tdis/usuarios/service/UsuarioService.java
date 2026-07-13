@@ -2,6 +2,7 @@ package com.tdis.usuarios.service;
 
 import com.tdis.common.dto.LoginRequest;
 import com.tdis.common.dto.LoginResponse;
+import com.tdis.common.dto.RegisterRequest;
 import com.tdis.common.dto.UsuarioDTO;
 import com.tdis.common.enums.TipoUsuario;
 import com.tdis.common.exception.BadRequestException;
@@ -56,6 +57,30 @@ public class UsuarioService {
         String token = jwtTokenProvider.generateToken(admin.getId(), admin.getTipoUsuario());
         LoginResponse response = new LoginResponse(token, admin.getId(), null, admin.getEmail(), admin.getNombre(), admin.getApellidos(), admin.getTipoUsuario());
         return response;
+    }
+
+    public LoginResponse register(RegisterRequest request) {
+        if (usuarioRepository.existsByMatricula(request.getMatricula())) {
+            throw new BadRequestException("La matricula ya esta registrada");
+        }
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("El correo electronico ya esta registrado");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setMatricula(request.getMatricula());
+        usuario.setEmail(request.getEmail());
+        usuario.setNombre(request.getNombre());
+        usuario.setApellidos(request.getApellidos());
+        usuario.setTipoUsuario(TipoUsuario.ALUMNO);
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setActivo(true);
+
+        usuario = usuarioRepository.save(usuario);
+
+        String token = jwtTokenProvider.generateToken(usuario.getId(), usuario.getTipoUsuario());
+        return new LoginResponse(token, usuario.getId(), usuario.getMatricula(), usuario.getEmail(),
+                usuario.getNombre(), usuario.getApellidos(), usuario.getTipoUsuario());
     }
 
     public UsuarioDTO crearUsuario(UsuarioDTO dto, String password) {

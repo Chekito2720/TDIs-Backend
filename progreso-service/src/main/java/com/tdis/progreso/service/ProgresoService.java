@@ -24,10 +24,10 @@ import java.util.UUID;
 @Slf4j
 public class ProgresoService {
 
-    private static final int PUNTOS_SENSIBILIZADOR = 0;
-    private static final int PUNTOS_FORMATIVO = 100;
-    private static final int PUNTOS_APLICATIVO = 250;
-    private static final int PUNTOS_IMPLEMENTADOR = 500;
+    private static final int PUNTOS_EXPLORADOR = 0;
+    private static final int PUNTOS_PROMOTOR = 301;
+    private static final int PUNTOS_LIDER = 601;
+    private static final int PUNTOS_EMBAJADOR = 1000;
 
     private final TramitesClient tramitesClient;
     private final CatalogoClient catalogoClient;
@@ -84,7 +84,7 @@ public class ProgresoService {
         int puntosTotales = 0;
         Map<String, Integer> puntosPorEje = new HashMap<>();
         puntosPorEje.put("ENTORNO_SOCIAL", 0);
-        puntosPorEje.put("CULTURAL", 0);
+        puntosPorEje.put("PERSONAL", 0);
         puntosPorEje.put("DEPORTIVO", 0);
         puntosPorEje.put("TRASCENDENCIA", 0);
 
@@ -119,25 +119,25 @@ public class ProgresoService {
     }
 
     private int puntosSiguienteNivel(int puntosActuales) {
-        if (puntosActuales < PUNTOS_FORMATIVO) return PUNTOS_FORMATIVO - puntosActuales;
-        if (puntosActuales < PUNTOS_APLICATIVO) return PUNTOS_APLICATIVO - puntosActuales;
-        if (puntosActuales < PUNTOS_IMPLEMENTADOR) return PUNTOS_IMPLEMENTADOR - puntosActuales;
+        if (puntosActuales < PUNTOS_PROMOTOR) return PUNTOS_PROMOTOR - puntosActuales;
+        if (puntosActuales < PUNTOS_LIDER) return PUNTOS_LIDER - puntosActuales;
+        if (puntosActuales < PUNTOS_EMBAJADOR) return PUNTOS_EMBAJADOR - puntosActuales;
         return 0;
     }
 
     private int calcularPorcentaje(int puntosTotales) {
-        if (puntosTotales >= PUNTOS_IMPLEMENTADOR) return 100;
-        if (puntosTotales >= PUNTOS_APLICATIVO)
-            return 75 + ((puntosTotales - PUNTOS_APLICATIVO) * 25 / (PUNTOS_IMPLEMENTADOR - PUNTOS_APLICATIVO));
-        if (puntosTotales >= PUNTOS_FORMATIVO)
-            return 25 + ((puntosTotales - PUNTOS_FORMATIVO) * 50 / (PUNTOS_APLICATIVO - PUNTOS_FORMATIVO));
-        return (puntosTotales * 25) / PUNTOS_FORMATIVO;
+        if (puntosTotales >= PUNTOS_EMBAJADOR) return 100;
+        if (puntosTotales >= PUNTOS_LIDER)
+            return 75 + ((puntosTotales - PUNTOS_LIDER) * 25 / (PUNTOS_EMBAJADOR - PUNTOS_LIDER));
+        if (puntosTotales >= PUNTOS_PROMOTOR)
+            return 25 + ((puntosTotales - PUNTOS_PROMOTOR) * 50 / (PUNTOS_LIDER - PUNTOS_PROMOTOR));
+        return (puntosTotales * 25) / (PUNTOS_PROMOTOR - PUNTOS_EXPLORADOR);
     }
 
     private NivelProgreso calcularNivel(int puntos) {
-        if (puntos >= PUNTOS_IMPLEMENTADOR) return NivelProgreso.IMPLEMENTADOR;
-        if (puntos >= PUNTOS_APLICATIVO) return NivelProgreso.APLICATIVO;
-        if (puntos >= PUNTOS_FORMATIVO) return NivelProgreso.FORMATIVO;
-        return NivelProgreso.SENSIBILIZADOR;
+        if (puntos >= PUNTOS_EMBAJADOR) return NivelProgreso.EMBAJADOR;
+        if (puntos >= PUNTOS_LIDER) return NivelProgreso.LIDER;
+        if (puntos >= PUNTOS_PROMOTOR) return NivelProgreso.PROMOTOR;
+        return NivelProgreso.EXPLORADOR;
     }
 }

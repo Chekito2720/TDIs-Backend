@@ -32,7 +32,7 @@ public class Archivo {
     private Long tamano;
 
     @Column(name = "mime_type", length = 100)
-    private String mimeType = "application/pdf";
+    private String mimeType;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;

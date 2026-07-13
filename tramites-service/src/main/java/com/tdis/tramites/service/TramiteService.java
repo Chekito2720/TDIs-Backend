@@ -1,16 +1,22 @@
 package com.tdis.tramites.service;
 
 import com.tdis.common.dto.ActividadDTO;
+import com.tdis.common.dto.AnalisisIAResponse;
 import com.tdis.common.dto.CrearSolicitudRequest;
 import com.tdis.common.dto.RevisarSolicitudRequest;
 import com.tdis.common.dto.SolicitudDTO;
 import com.tdis.common.enums.EstadoSolicitud;
 import com.tdis.common.exception.BadRequestException;
 import com.tdis.common.exception.ResourceNotFoundException;
+import com.tdis.common.dto.UsuarioDTO;
 import com.tdis.tramites.client.CatalogoClient;
+import com.tdis.tramites.client.DocumentosClient;
+import com.tdis.tramites.client.N8nClient;
+import com.tdis.tramites.client.UsuariosClient;
 import com.tdis.tramites.entity.Solicitud;
 import com.tdis.tramites.repository.SolicitudRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +24,21 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TramiteService {
 
     private final SolicitudRepository solicitudRepository;
     private final CatalogoClient catalogoClient;
+    private final DocumentosClient documentosClient;
+    private final N8nClient n8nClient;
+    private final UsuariosClient usuariosClient;
 
     public List<SolicitudDTO> listarPorAlumno(UUID alumnoId) {
-        return solicitudRepository.findByAlumnoIdOrderByCreatedAtDesc(alumnoId).stream()
+        List<Solicitud> entities = solicitudRepository.findByAlumnoIdOrderByCreatedAtDesc(alumnoId);
+        log.info("listarPorAlumno: alumnoId={}, found {} entities", alumnoId, entities.size());
+        return entities.stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -90,11 +102,63 @@ public class TramiteService {
     }
 
     @Transactional
+    public SolicitudDTO analizarIA(UUID solicitudId) {
+        Solicitud solicitud = solicitudRepository.findById(solicitudId)
+                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada"));
+
+        if (!"EVIDENCIA".equals(solicitud.getTipoSolicitud())) {
+            throw new BadRequestException("Solo se puede analizar solicitudes de evidencia");
+        }
+
+        byte[] imagenBytes;
+        try {
+            imagenBytes = documentosClient.descargarArchivoBytes(solicitudId);
+        } catch (Exception e) {
+            throw new BadRequestException("No hay evidencia adjunta para analizar");
+        }
+
+        try {
+            ActividadDTO actividad = catalogoClient.obtenerActividad(solicitud.getActividadId());
+
+            AnalisisIAResponse ia = n8nClient.analizarEvidencia(
+                    actividad.getTitulo(),
+                    solicitud.getDescripcion(),
+                    imagenBytes,
+                    solicitud.getNombreArchivo()
+            );
+
+            solicitud.setAiEstado(ia.getEstado());
+            solicitud.setAiMotivo(ia.getMotivo());
+            solicitud.setAiDescripcionAnalisis(ia.getDescripcion_analisis());
+
+            String estadoIA = ia.getEstado();
+            if ("Aprobado".equals(estadoIA)) {
+                solicitud.setEstado(EstadoSolicitud.APROBADA);
+            } else if ("Rechazado".equals(estadoIA)) {
+                solicitud.setEstado(EstadoSolicitud.RECHAZADA);
+            } else {
+                solicitud.setEstado(EstadoSolicitud.REVISION_HUMANA);
+            }
+
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("Error en analisis IA: {}", e.getMessage());
+            solicitud.setEstado(EstadoSolicitud.REVISION_HUMANA);
+            solicitud.setAiMotivo("No fue posible conectar con el servicio de analisis IA.");
+        }
+
+        solicitud = solicitudRepository.save(solicitud);
+        return toDTO(solicitud);
+    }
+
+    @Transactional
     public SolicitudDTO revisar(UUID id, RevisarSolicitudRequest request) {
         Solicitud solicitud = solicitudRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada"));
 
-        if (solicitud.getEstado() != EstadoSolicitud.EN_REVISION) {
+        if (solicitud.getEstado() != EstadoSolicitud.EN_REVISION
+                && solicitud.getEstado() != EstadoSolicitud.REVISION_HUMANA) {
             throw new BadRequestException("La solicitud ya fue revisada");
         }
 
@@ -142,6 +206,9 @@ public class TramiteService {
         dto.setComentarioRechazo(solicitud.getComentarioRechazo());
         dto.setArchivoPath(solicitud.getArchivoPath());
         dto.setNombreArchivo(solicitud.getNombreArchivo());
+        dto.setAiEstado(solicitud.getAiEstado());
+        dto.setAiMotivo(solicitud.getAiMotivo());
+        dto.setAiDescripcionAnalisis(solicitud.getAiDescripcionAnalisis());
         dto.setCreatedAt(solicitud.getCreatedAt());
         dto.setUpdatedAt(solicitud.getUpdatedAt());
 
@@ -151,7 +218,17 @@ public class TramiteService {
             dto.setActividadEje(actividad.getEje().name());
             dto.setActividadPuntos(actividad.getPuntosTdi());
         } catch (Exception e) {
+            log.warn("toDTO: catalogo failed for actividadId={}: {}", solicitud.getActividadId(), e.getMessage());
             dto.setActividadTitulo("Actividad no disponible");
+        }
+
+        try {
+            UsuarioDTO usuario = usuariosClient.obtenerPorId(solicitud.getAlumnoId());
+            dto.setAlumnoNombre(usuario.getNombre() + " " + usuario.getApellidos());
+            dto.setAlumnoMatricula(usuario.getMatricula());
+        } catch (Exception e) {
+            log.warn("toDTO: usuarios failed for alumnoId={}: {}", solicitud.getAlumnoId(), e.getMessage());
+            dto.setAlumnoNombre("Alumno no disponible");
         }
 
         return dto;

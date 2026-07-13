@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -20,4 +21,5 @@ public class AlumnoResumenDTO {
     private int dep;
     private int trasc;
     private int total;
+    private LocalDateTime createdAt;
 }

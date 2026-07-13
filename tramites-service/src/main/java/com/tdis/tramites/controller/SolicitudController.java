@@ -54,6 +54,11 @@ public class SolicitudController {
                 .body(tramiteService.crear(alumnoId, request));
     }
 
+    @PostMapping("/{id}/analizar-ia")
+    public ResponseEntity<SolicitudDTO> analizarIA(@PathVariable UUID id) {
+        return ResponseEntity.ok(tramiteService.analizarIA(id));
+    }
+
     @PutMapping("/{id}/revisar")
     public ResponseEntity<SolicitudDTO> revisar(@PathVariable UUID id,
                                                  @Valid @RequestBody RevisarSolicitudRequest request) {

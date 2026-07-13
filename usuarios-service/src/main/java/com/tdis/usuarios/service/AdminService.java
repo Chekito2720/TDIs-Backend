@@ -31,7 +31,7 @@ public class AdminService {
 
         int puntosDistribuidos = 0;
         Map<String, Integer> puntosPorEje = new HashMap<>();
-        Map<String, Long> distribucionNiveles = new HashMap<>();
+        Map<String, Integer> distribucionNiveles = new HashMap<>();
         List<AlumnoResumenDTO> topAlumnos = new ArrayList<>();
 
         // Compute levels for each student based on approved solicitudes
@@ -57,7 +57,7 @@ public class AdminService {
         for (Usuario alumno : alumnos) {
             int pts = puntosPorAlumno.getOrDefault(alumno.getId(), 0);
             NivelProgreso nivel = calcularNivel(pts);
-            distribucionNiveles.merge(nivel.name(), 1L, Long::sum);
+            distribucionNiveles.merge(nivel.name(), 1, Integer::sum);
 
             Map<String, Integer> ejes = puntosEjePorAlumno.getOrDefault(alumno.getId(), new HashMap<>());
             topAlumnos.add(new AlumnoResumenDTO(
@@ -66,11 +66,12 @@ public class AdminService {
                     alumno.getNombre(),
                     alumno.getApellidos(),
                     nivel.name(),
-                    ejes.getOrDefault("CULTURAL", 0),
+                    ejes.getOrDefault("PERSONAL", 0),
                     ejes.getOrDefault("ENTORNO_SOCIAL", 0),
                     ejes.getOrDefault("DEPORTIVO", 0),
                     ejes.getOrDefault("TRASCENDENCIA", 0),
-                    pts
+                    pts,
+                    alumno.getCreatedAt()
             ));
         }
 
@@ -119,11 +120,12 @@ public class AdminService {
                     alumno.getNombre(),
                     alumno.getApellidos(),
                     calcularNivel(pts).name(),
-                    ejes.getOrDefault("CULTURAL", 0),
+                    ejes.getOrDefault("PERSONAL", 0),
                     ejes.getOrDefault("ENTORNO_SOCIAL", 0),
                     ejes.getOrDefault("DEPORTIVO", 0),
                     ejes.getOrDefault("TRASCENDENCIA", 0),
-                    pts
+                    pts,
+                    alumno.getCreatedAt()
             ));
         }
 
@@ -131,9 +133,9 @@ public class AdminService {
     }
 
     private NivelProgreso calcularNivel(int puntos) {
-        if (puntos >= 500) return NivelProgreso.IMPLEMENTADOR;
-        if (puntos >= 250) return NivelProgreso.APLICATIVO;
-        if (puntos >= 100) return NivelProgreso.FORMATIVO;
-        return NivelProgreso.SENSIBILIZADOR;
+        if (puntos >= 1000) return NivelProgreso.EMBAJADOR;
+        if (puntos >= 601) return NivelProgreso.LIDER;
+        if (puntos >= 301) return NivelProgreso.PROMOTOR;
+        return NivelProgreso.EXPLORADOR;
     }
 }
