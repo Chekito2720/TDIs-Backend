@@ -3,6 +3,7 @@ package com.tdis.usuarios.service;
 import com.tdis.common.dto.LoginRequest;
 import com.tdis.common.dto.LoginResponse;
 import com.tdis.common.dto.RegisterRequest;
+import com.tdis.common.dto.RegisterExternoRequest;
 import com.tdis.common.dto.UsuarioDTO;
 import com.tdis.common.enums.TipoUsuario;
 import com.tdis.common.exception.BadRequestException;
@@ -75,6 +76,46 @@ public class UsuarioService {
         usuario.setTipoUsuario(TipoUsuario.ALUMNO);
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setActivo(true);
+
+        usuario = usuarioRepository.save(usuario);
+
+        String token = jwtTokenProvider.generateToken(usuario.getId(), usuario.getTipoUsuario());
+        return new LoginResponse(token, usuario.getId(), usuario.getMatricula(), usuario.getEmail(),
+                usuario.getNombre(), usuario.getApellidos(), usuario.getTipoUsuario());
+    }
+
+    public LoginResponse registerExterno(RegisterExternoRequest request) {
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("El correo electronico ya esta registrado");
+        }
+
+        String tipo = request.getTipo();
+        if (tipo == null || (!tipo.equals("PERSONA") && !tipo.equals("ORGANIZACION"))) {
+            throw new BadRequestException("El tipo debe ser PERSONA u ORGANIZACION");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(request.getEmail());
+        usuario.setTipoUsuario(TipoUsuario.EXTERNO);
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setActivo(true);
+
+        if ("ORGANIZACION".equals(tipo)) {
+            if (request.getNombre() == null || request.getNombre().isBlank()) {
+                throw new BadRequestException("El nombre de la organizacion es requerido");
+            }
+            usuario.setNombre(request.getNombre().trim());
+            usuario.setApellidos("");
+        } else {
+            if (request.getNombre() == null || request.getNombre().isBlank()) {
+                throw new BadRequestException("El nombre es requerido");
+            }
+            if (request.getApellidos() == null || request.getApellidos().isBlank()) {
+                throw new BadRequestException("Los apellidos son requeridos");
+            }
+            usuario.setNombre(request.getNombre().trim());
+            usuario.setApellidos(request.getApellidos().trim());
+        }
 
         usuario = usuarioRepository.save(usuario);
 

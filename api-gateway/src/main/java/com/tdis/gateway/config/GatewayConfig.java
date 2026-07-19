@@ -28,6 +28,11 @@ public class GatewayConfig {
                 .filters(f -> f
                     .removeRequestHeader("Authorization"))
                 .uri("http://localhost:8081"))
+            .route("auth-register-externo-open", r -> r
+                .path("/api/auth/register-externo")
+                .filters(f -> f
+                    .removeRequestHeader("Authorization"))
+                .uri("http://localhost:8081"))
             .route("usuarios-service", r -> r
                 .path("/api/auth/**", "/api/usuarios/**", "/api/admin/**")
                 .filters(f -> f
