@@ -1,7 +1,6 @@
 package com.tdis.usuarios.client;
 
 import com.tdis.common.dto.SolicitudDTO;
-import com.tdis.common.enums.EstadoSolicitud;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

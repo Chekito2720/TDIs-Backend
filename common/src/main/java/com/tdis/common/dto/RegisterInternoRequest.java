@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
+public class RegisterInternoRequest {
 
     @NotBlank(message = "La matricula es requerida")
     @Size(min = 8, message = "La matricula debe tener al menos 8 digitos")
@@ -29,6 +29,4 @@ public class RegisterRequest {
 
     @NotBlank(message = "Los apellidos son requeridos")
     private String apellidos;
-
-    private String tipo;
 }

@@ -1,6 +1,7 @@
 package com.tdis.catalogo.entity;
 
 import com.tdis.common.enums.EjeFormativo;
+import com.tdis.common.enums.EstadoRevision;
 import com.tdis.common.enums.Periodicidad;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,19 @@ public class Actividad {
     @Column(nullable = false)
     private Boolean activa = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_revision", nullable = false, length = 20)
+    private EstadoRevision estadoRevision = EstadoRevision.PENDIENTE;
+
+    @Column(name = "creador_id")
+    private UUID creadorId;
+
+    @Column(name = "creador_tipo", length = 20)
+    private String creadorTipo;
+
+    @Column(name = "comentario_revision", columnDefinition = "TEXT")
+    private String comentarioRevision;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
@@ -57,6 +71,8 @@ public class Actividad {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (estadoRevision == null) estadoRevision = EstadoRevision.PENDIENTE;
+        if (activa == null) activa = false;
     }
 
     @PreUpdate

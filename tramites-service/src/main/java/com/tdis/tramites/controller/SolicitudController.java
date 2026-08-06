@@ -48,7 +48,7 @@ public class SolicitudController {
     }
 
     @PostMapping
-    public ResponseEntity<SolicitudDTO> crear(@RequestHeader("X-User-Id") UUID alumnoId,
+    public ResponseEntity<SolicitudDTO> crear(@RequestHeader(value = "X-User-Id", required = false) UUID alumnoId,
                                                @Valid @RequestBody CrearSolicitudRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(tramiteService.crear(alumnoId, request));

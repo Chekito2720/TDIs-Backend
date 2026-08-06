@@ -25,9 +25,9 @@ import java.util.UUID;
 public class ProgresoService {
 
     private static final int PUNTOS_EXPLORADOR = 0;
-    private static final int PUNTOS_PROMOTOR = 301;
-    private static final int PUNTOS_LIDER = 601;
-    private static final int PUNTOS_EMBAJADOR = 1000;
+    private static final int PUNTOS_PROMOTOR = 21;
+    private static final int PUNTOS_LIDER = 42;
+    private static final int PUNTOS_EMBAJADOR = 65;
 
     private final TramitesClient tramitesClient;
     private final CatalogoClient catalogoClient;
@@ -130,8 +130,8 @@ public class ProgresoService {
         if (puntosTotales >= PUNTOS_LIDER)
             return 75 + ((puntosTotales - PUNTOS_LIDER) * 25 / (PUNTOS_EMBAJADOR - PUNTOS_LIDER));
         if (puntosTotales >= PUNTOS_PROMOTOR)
-            return 25 + ((puntosTotales - PUNTOS_PROMOTOR) * 50 / (PUNTOS_LIDER - PUNTOS_PROMOTOR));
-        return (puntosTotales * 25) / (PUNTOS_PROMOTOR - PUNTOS_EXPLORADOR);
+            return 33 + ((puntosTotales - PUNTOS_PROMOTOR) * 33 / (PUNTOS_LIDER - PUNTOS_PROMOTOR));
+        return (puntosTotales * 33) / (PUNTOS_PROMOTOR - PUNTOS_EXPLORADOR);
     }
 
     private NivelProgreso calcularNivel(int puntos) {

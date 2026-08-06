@@ -2,6 +2,7 @@ package com.tdis.usuarios.service;
 
 import com.tdis.common.dto.LoginRequest;
 import com.tdis.common.dto.LoginResponse;
+import com.tdis.common.dto.RegisterInternoRequest;
 import com.tdis.common.dto.RegisterRequest;
 import com.tdis.common.dto.RegisterExternoRequest;
 import com.tdis.common.dto.UsuarioDTO;
@@ -39,9 +40,16 @@ public class UsuarioService {
                 throw new UnauthorizedException("Usuario inactivo");
             }
 
+            if (request.getPassword() == null || request.getPassword().isBlank()) {
+                throw new UnauthorizedException("La contrasena es requerida");
+            }
+
+            if (!passwordEncoder.matches(request.getPassword(), alumno.getPassword())) {
+                throw new UnauthorizedException("Contrasena incorrecta");
+            }
+
             String token = jwtTokenProvider.generateToken(alumno.getId(), alumno.getTipoUsuario());
-            LoginResponse response = new LoginResponse(token, alumno.getId(), alumno.getMatricula(), null, alumno.getNombre(), alumno.getApellidos(), alumno.getTipoUsuario());
-            return response;
+            return new LoginResponse(token, alumno.getId(), alumno.getMatricula(), null, alumno.getNombre(), alumno.getApellidos(), alumno.getTipoUsuario());
         }
 
         Usuario admin = usuarioRepository.findByEmail(credencial)
@@ -56,8 +64,7 @@ public class UsuarioService {
         }
 
         String token = jwtTokenProvider.generateToken(admin.getId(), admin.getTipoUsuario());
-        LoginResponse response = new LoginResponse(token, admin.getId(), null, admin.getEmail(), admin.getNombre(), admin.getApellidos(), admin.getTipoUsuario());
-        return response;
+        return new LoginResponse(token, admin.getId(), null, admin.getEmail(), admin.getNombre(), admin.getApellidos(), admin.getTipoUsuario());
     }
 
     public LoginResponse register(RegisterRequest request) {
@@ -74,6 +81,30 @@ public class UsuarioService {
         usuario.setNombre(request.getNombre());
         usuario.setApellidos(request.getApellidos());
         usuario.setTipoUsuario(TipoUsuario.ALUMNO);
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setActivo(true);
+
+        usuario = usuarioRepository.save(usuario);
+
+        String token = jwtTokenProvider.generateToken(usuario.getId(), usuario.getTipoUsuario());
+        return new LoginResponse(token, usuario.getId(), usuario.getMatricula(), usuario.getEmail(),
+                usuario.getNombre(), usuario.getApellidos(), usuario.getTipoUsuario());
+    }
+
+    public LoginResponse registerInterno(RegisterInternoRequest request) {
+        if (usuarioRepository.existsByMatricula(request.getMatricula())) {
+            throw new BadRequestException("La matricula ya esta registrada");
+        }
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("El correo electronico ya esta registrado");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setMatricula(request.getMatricula());
+        usuario.setEmail(request.getEmail());
+        usuario.setNombre(request.getNombre());
+        usuario.setApellidos(request.getApellidos());
+        usuario.setTipoUsuario(TipoUsuario.INTERNO);
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setActivo(true);
 

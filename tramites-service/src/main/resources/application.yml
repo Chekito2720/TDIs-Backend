@@ -1,9 +1,5 @@
 server:
   port: 8083
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-stacktrace: on_param
 
 spring:
   application:
@@ -12,6 +8,11 @@ spring:
     multipart:
       max-file-size: 15MB
       max-request-size: 15MB
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+      include-stacktrace: on_param
   datasource:
     url: jdbc:postgresql://localhost:5432/tdis_tramites
     username: postgres
@@ -25,12 +26,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  mvc:
-    throw-exception-if-no-handler-found: true
 
 eureka:
   client:
-    service-url:
+    "service-url":
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true

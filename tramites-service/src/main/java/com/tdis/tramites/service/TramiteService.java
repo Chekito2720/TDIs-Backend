@@ -69,14 +69,19 @@ public class TramiteService {
             throw new BadRequestException("La actividad no esta disponible");
         }
 
+        UUID alumnoIdFinal = alumnoId;
+        if (alumnoIdFinal == null) {
+            throw new BadRequestException("El alumnoId es requerido");
+        }
+
         boolean yaEnviada = solicitudRepository
-                .existsByAlumnoIdAndActividadIdAndEstado(alumnoId, request.getActividadId(), EstadoSolicitud.EN_REVISION);
+                .existsByAlumnoIdAndActividadIdAndEstado(alumnoIdFinal, request.getActividadId(), EstadoSolicitud.EN_REVISION);
         if (yaEnviada) {
             throw new BadRequestException("Ya tienes una solicitud en revision para esta actividad");
         }
 
         Solicitud solicitud = new Solicitud();
-        solicitud.setAlumnoId(alumnoId);
+        solicitud.setAlumnoId(alumnoIdFinal);
         solicitud.setActividadId(request.getActividadId());
         solicitud.setTipoSolicitud(request.getTipoSolicitud());
         solicitud.setDescripcion(request.getDescripcion());

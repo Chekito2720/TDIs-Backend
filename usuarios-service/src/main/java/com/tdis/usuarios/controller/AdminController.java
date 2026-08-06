@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,7 +25,12 @@ public class AdminController {
     }
 
     @GetMapping("/alumnos")
-    public ResponseEntity<List<AlumnoResumenDTO>> listarAlumnos() {
-        return ResponseEntity.ok(adminService.listarAlumnos());
+    public ResponseEntity<List<AlumnoResumenDTO>> listarAlumnos(@RequestParam(required = false) String tutor) {
+        return ResponseEntity.ok(adminService.listarAlumnos(tutor));
+    }
+
+    @GetMapping("/tutores")
+    public ResponseEntity<List<String>> listarTutores() {
+        return ResponseEntity.ok(adminService.listarTutores());
     }
 }

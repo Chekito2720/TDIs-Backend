@@ -2,7 +2,6 @@ package com.tdis.tramites.controller;
 
 import com.tdis.common.exception.BadRequestException;
 import com.tdis.common.exception.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -16,10 +16,11 @@ public class AlumnoResumenDTO {
     private String nombre;
     private String apellidos;
     private String nivel;
-    private int cult;
+    private int personal;
     private int social;
     private int dep;
     private int trasc;
     private int total;
+    private String tutor;
     private LocalDateTime createdAt;
 }

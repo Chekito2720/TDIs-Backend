@@ -1,6 +1,7 @@
 package com.tdis.common.dto;
 
 import com.tdis.common.enums.EjeFormativo;
+import com.tdis.common.enums.EstadoRevision;
 import com.tdis.common.enums.Periodicidad;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,5 +24,11 @@ public class ActividadDTO {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private Boolean activa;
+    private EstadoRevision estadoRevision;
+    private UUID creadorId;
+    private String creadorNombre;
+    private String creadorTipo;
+    private String comentarioRevision;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

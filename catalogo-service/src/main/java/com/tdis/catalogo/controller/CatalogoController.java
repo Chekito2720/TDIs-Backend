@@ -1,6 +1,7 @@
 package com.tdis.catalogo.controller;
 
 import com.tdis.common.dto.ActividadDTO;
+import com.tdis.common.enums.EstadoRevision;
 import com.tdis.common.enums.EjeFormativo;
 import com.tdis.catalogo.service.CatalogoService;
 import jakarta.validation.Valid;
@@ -20,7 +21,11 @@ public class CatalogoController {
     private final CatalogoService catalogoService;
 
     @GetMapping
-    public ResponseEntity<List<ActividadDTO>> listar(@RequestParam(required = false) Boolean todas) {
+    public ResponseEntity<List<ActividadDTO>> listar(@RequestParam(required = false) Boolean todas,
+                                                     @RequestParam(required = false) EstadoRevision estadoRevision) {
+        if (estadoRevision != null) {
+            return ResponseEntity.ok(catalogoService.listarPorEstadoRevision(estadoRevision));
+        }
         if (Boolean.TRUE.equals(todas)) {
             return ResponseEntity.ok(catalogoService.listarTodas());
         }
@@ -30,6 +35,11 @@ public class CatalogoController {
     @GetMapping("/eje/{eje}")
     public ResponseEntity<List<ActividadDTO>> listarPorEje(@PathVariable EjeFormativo eje) {
         return ResponseEntity.ok(catalogoService.listarPorEje(eje));
+    }
+
+    @GetMapping("/creador/{creadorId}")
+    public ResponseEntity<List<ActividadDTO>> listarPorCreador(@PathVariable UUID creadorId) {
+        return ResponseEntity.ok(catalogoService.obtenerPorCreador(creadorId));
     }
 
     @GetMapping("/{id}")
@@ -59,5 +69,12 @@ public class CatalogoController {
     public ResponseEntity<Void> activar(@PathVariable UUID id) {
         catalogoService.activar(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/revisar")
+    public ResponseEntity<ActividadDTO> revisar(@PathVariable UUID id,
+                                                 @RequestParam EstadoRevision estado,
+                                                 @RequestParam(required = false) String comentario) {
+        return ResponseEntity.ok(catalogoService.revisar(id, estado, comentario));
     }
 }
