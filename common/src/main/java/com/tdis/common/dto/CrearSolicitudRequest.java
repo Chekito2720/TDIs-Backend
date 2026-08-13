@@ -11,8 +11,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrearSolicitudRequest {
-    @NotNull(message = "El ID de la actividad es requerido")
     private UUID actividadId;
+    private String nombreActividad;
 
     private String tipoSolicitud;
     private String descripcion;
@@ -31,4 +31,17 @@ public class CrearSolicitudRequest {
     private String cargoResponsable;
     private String telefonoResponsable;
     private String correoResponsable;
+
+    // Campos específicos de Solicitud Previa
+    private String dimensionesFormacion;
+    private String nivelImpacto;
+    private String publicoObjetivo;
+    private String asignaturasRelacionadas;
+    private String competenciasReforzar;
+    private String evidenciasRequeridas;
+    private String justificacionPersonal;
+    private String impactoAcademico;
+    private String asistenciaEsperada;
+    private String alumnosGeneranTdi;
+    private String horasEstimadas;
 }

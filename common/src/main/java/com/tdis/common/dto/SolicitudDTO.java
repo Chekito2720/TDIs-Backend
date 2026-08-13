@@ -18,6 +18,7 @@ public class SolicitudDTO {
     private String alumnoNombre;
     private String tipoSolicitud;
     private UUID actividadId;
+    private String nombreActividad;
     private String actividadTitulo;
     private String actividadEje;
     private Integer actividadPuntos;
@@ -44,6 +45,17 @@ public class SolicitudDTO {
     private String aiEstado;
     private String aiMotivo;
     private String aiDescripcionAnalisis;
+    private String dimensionesFormacion;
+    private String nivelImpacto;
+    private String publicoObjetivo;
+    private String asignaturasRelacionadas;
+    private String competenciasReforzar;
+    private String evidenciasRequeridas;
+    private String justificacionPersonal;
+    private String impactoAcademico;
+    private String asistenciaEsperada;
+    private String alumnosGeneranTdi;
+    private String horasEstimadas;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

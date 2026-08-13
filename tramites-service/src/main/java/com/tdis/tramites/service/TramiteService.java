@@ -63,26 +63,34 @@ public class TramiteService {
 
     @Transactional
     public SolicitudDTO crear(UUID alumnoId, CrearSolicitudRequest request) {
-        ActividadDTO actividad = catalogoClient.obtenerActividad(request.getActividadId());
-
-        if (!actividad.getActiva()) {
-            throw new BadRequestException("La actividad no esta disponible");
-        }
-
         UUID alumnoIdFinal = alumnoId;
         if (alumnoIdFinal == null) {
             throw new BadRequestException("El alumnoId es requerido");
         }
 
-        boolean yaEnviada = solicitudRepository
-                .existsByAlumnoIdAndActividadIdAndEstado(alumnoIdFinal, request.getActividadId(), EstadoSolicitud.EN_REVISION);
-        if (yaEnviada) {
-            throw new BadRequestException("Ya tienes una solicitud en revision para esta actividad");
+        boolean esPrevia = "PREVIA".equalsIgnoreCase(request.getTipoSolicitud());
+
+        // EVIDENCIA: validar actividad del catálogo. PREVIA: no requiere actividad.
+        if (!esPrevia) {
+            if (request.getActividadId() == null) {
+                throw new BadRequestException("La actividad es requerida para evidencias");
+            }
+            ActividadDTO actividad = catalogoClient.obtenerActividad(request.getActividadId());
+            if (!actividad.getActiva()) {
+                throw new BadRequestException("La actividad no esta disponible");
+            }
+
+            boolean yaEnviada = solicitudRepository
+                    .existsByAlumnoIdAndActividadIdAndEstado(alumnoIdFinal, request.getActividadId(), EstadoSolicitud.EN_REVISION);
+            if (yaEnviada) {
+                throw new BadRequestException("Ya tienes una solicitud en revision para esta actividad");
+            }
         }
 
         Solicitud solicitud = new Solicitud();
         solicitud.setAlumnoId(alumnoIdFinal);
-        solicitud.setActividadId(request.getActividadId());
+        solicitud.setActividadId(esPrevia ? null : request.getActividadId());
+        solicitud.setNombreActividad(request.getNombreActividad());
         solicitud.setTipoSolicitud(request.getTipoSolicitud());
         solicitud.setDescripcion(request.getDescripcion());
         solicitud.setReflexion(request.getReflexion());
@@ -100,6 +108,20 @@ public class TramiteService {
         solicitud.setCargoResponsable(request.getCargoResponsable());
         solicitud.setTelefonoResponsable(request.getTelefonoResponsable());
         solicitud.setCorreoResponsable(request.getCorreoResponsable());
+
+        // Campos específicos de Solicitud Previa
+        solicitud.setDimensionesFormacion(request.getDimensionesFormacion());
+        solicitud.setNivelImpacto(request.getNivelImpacto());
+        solicitud.setPublicoObjetivo(request.getPublicoObjetivo());
+        solicitud.setAsignaturasRelacionadas(request.getAsignaturasRelacionadas());
+        solicitud.setCompetenciasReforzar(request.getCompetenciasReforzar());
+        solicitud.setEvidenciasRequeridas(request.getEvidenciasRequeridas());
+        solicitud.setJustificacionPersonal(request.getJustificacionPersonal());
+        solicitud.setImpactoAcademico(request.getImpactoAcademico());
+        solicitud.setAsistenciaEsperada(request.getAsistenciaEsperada());
+        solicitud.setAlumnosGeneranTdi(request.getAlumnosGeneranTdi());
+        solicitud.setHorasEstimadas(request.getHorasEstimadas());
+
         solicitud.setEstado(EstadoSolicitud.EN_REVISION);
 
         solicitud = solicitudRepository.save(solicitud);
@@ -214,14 +236,30 @@ public class TramiteService {
         dto.setAiEstado(solicitud.getAiEstado());
         dto.setAiMotivo(solicitud.getAiMotivo());
         dto.setAiDescripcionAnalisis(solicitud.getAiDescripcionAnalisis());
+        dto.setDimensionesFormacion(solicitud.getDimensionesFormacion());
+        dto.setNivelImpacto(solicitud.getNivelImpacto());
+        dto.setPublicoObjetivo(solicitud.getPublicoObjetivo());
+        dto.setAsignaturasRelacionadas(solicitud.getAsignaturasRelacionadas());
+        dto.setCompetenciasReforzar(solicitud.getCompetenciasReforzar());
+        dto.setEvidenciasRequeridas(solicitud.getEvidenciasRequeridas());
+        dto.setJustificacionPersonal(solicitud.getJustificacionPersonal());
+        dto.setImpactoAcademico(solicitud.getImpactoAcademico());
+        dto.setAsistenciaEsperada(solicitud.getAsistenciaEsperada());
+        dto.setAlumnosGeneranTdi(solicitud.getAlumnosGeneranTdi());
+        dto.setHorasEstimadas(solicitud.getHorasEstimadas());
+        dto.setNombreActividad(solicitud.getNombreActividad());
         dto.setCreatedAt(solicitud.getCreatedAt());
         dto.setUpdatedAt(solicitud.getUpdatedAt());
 
         try {
-            ActividadDTO actividad = catalogoClient.obtenerActividad(solicitud.getActividadId());
-            dto.setActividadTitulo(actividad.getTitulo());
-            dto.setActividadEje(actividad.getEje().name());
-            dto.setActividadPuntos(actividad.getPuntosTdi());
+            if (solicitud.getActividadId() != null) {
+                ActividadDTO actividad = catalogoClient.obtenerActividad(solicitud.getActividadId());
+                dto.setActividadTitulo(actividad.getTitulo());
+                dto.setActividadEje(actividad.getEje().name());
+                dto.setActividadPuntos(actividad.getPuntosTdi());
+            } else if (solicitud.getNombreActividad() != null) {
+                dto.setActividadTitulo(solicitud.getNombreActividad());
+            }
         } catch (Exception e) {
             log.warn("toDTO: catalogo failed for actividadId={}: {}", solicitud.getActividadId(), e.getMessage());
             dto.setActividadTitulo("Actividad no disponible");

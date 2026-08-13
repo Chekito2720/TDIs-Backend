@@ -90,6 +90,10 @@ public class ProgresoService {
 
         for (SolicitudDTO solicitud : aprobadas) {
             try {
+                if (solicitud.getActividadId() == null) {
+                    log.warn("Solicitud {} aprobada sin actividad (PREVIA), se omite del conteo de puntos", solicitud.getId());
+                    continue;
+                }
                 ActividadDTO actividad = catalogoClient.obtenerActividad(solicitud.getActividadId());
                 puntosTotales += actividad.getPuntosTdi();
                 String ejeKey = actividad.getEje().name();

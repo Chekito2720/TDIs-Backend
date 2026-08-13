@@ -26,8 +26,11 @@ public class Solicitud {
     @Column(name = "tipo_solicitud", length = 20)
     private String tipoSolicitud;
 
-    @Column(name = "actividad_id", nullable = false)
+    @Column(name = "actividad_id", nullable = true)
     private UUID actividadId;
+
+    @Column(name = "nombre_actividad", length = 255)
+    private String nombreActividad;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
@@ -98,6 +101,40 @@ public class Solicitud {
 
     @Column(name = "ai_descripcion_analisis", columnDefinition = "TEXT")
     private String aiDescripcionAnalisis;
+
+    // Campos específicos de Solicitud Previa
+    @Column(name = "dimensiones_formacion", columnDefinition = "TEXT")
+    private String dimensionesFormacion;
+
+    @Column(name = "nivel_impacto", length = 50)
+    private String nivelImpacto;
+
+    @Column(name = "publico_objetivo", columnDefinition = "TEXT")
+    private String publicoObjetivo;
+
+    @Column(name = "asignaturas_relacionadas", columnDefinition = "TEXT")
+    private String asignaturasRelacionadas;
+
+    @Column(name = "competencias_reforzar", columnDefinition = "TEXT")
+    private String competenciasReforzar;
+
+    @Column(name = "evidencias_requeridas", columnDefinition = "TEXT")
+    private String evidenciasRequeridas;
+
+    @Column(name = "justificacion_personal", columnDefinition = "TEXT")
+    private String justificacionPersonal;
+
+    @Column(name = "impacto_academico", columnDefinition = "TEXT")
+    private String impactoAcademico;
+
+    @Column(name = "asistencia_esperada", length = 20)
+    private String asistenciaEsperada;
+
+    @Column(name = "alumnos_generan_tdi", length = 20)
+    private String alumnosGeneranTdi;
+
+    @Column(name = "horas_estimadas", length = 20)
+    private String horasEstimadas;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;

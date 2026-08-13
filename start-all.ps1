@@ -59,8 +59,8 @@ function Get-ServiceProcess($port) {
     $conns = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
     if ($conns) {
         $pids = $conns | Select-Object -ExpandProperty OwningProcess -Unique
-        foreach ($pid in $pids) {
-            $proc = Get-Process -Id $pid -ErrorAction SilentlyContinue
+        foreach ($processId in $pids) {
+            $proc = Get-Process -Id $processId -ErrorAction SilentlyContinue
             if ($proc -and $proc.ProcessName -eq "java") {
                 return $proc
             }
