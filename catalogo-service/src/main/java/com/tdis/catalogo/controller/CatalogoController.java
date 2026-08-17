@@ -77,4 +77,13 @@ public class CatalogoController {
                                                  @RequestParam(required = false) String comentario) {
         return ResponseEntity.ok(catalogoService.revisar(id, estado, comentario));
     }
+
+    @PostMapping("/desde-previa/{solicitudId}")
+    public ResponseEntity<ActividadDTO> crearDesdePrevia(@PathVariable UUID solicitudId,
+                                                          @RequestParam UUID creadorId,
+                                                          @RequestParam String creadorTipo,
+                                                          @RequestParam Integer puntosTdi) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(catalogoService.crearDesdePrevia(solicitudId, creadorId, creadorTipo, puntosTdi));
+    }
 }

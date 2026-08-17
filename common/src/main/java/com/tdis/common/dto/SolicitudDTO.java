@@ -1,6 +1,8 @@
 package com.tdis.common.dto;
 
 import com.tdis.common.enums.EstadoSolicitud;
+import com.tdis.common.enums.EjeFormativo;
+import com.tdis.common.enums.TipoLugar;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -56,6 +58,15 @@ public class SolicitudDTO {
     private String asistenciaEsperada;
     private String alumnosGeneranTdi;
     private String horasEstimadas;
+    private String periodicidad;
+    private String fechaInicio;
+    private String fechaFin;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // Campos de Actividad para PREVIA
+    private EjeFormativo eje;
+    private Integer puntosTdi;
+    private Integer horasEfectivas;
+    private TipoLugar tipoLugar;
 }

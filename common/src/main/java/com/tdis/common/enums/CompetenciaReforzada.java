@@ -1,0 +1,12 @@
+package com.tdis.common.enums;
+
+public enum CompetenciaReforzada {
+    COMUNICACION_EFECTIVA,
+    TRABAJO_EN_EQUIPO,
+    LIDERAZGO,
+    PENSAMIENTO_CRITICO,
+    RESPONSABILIDAD_Y_ETICA,
+    TOMA_DE_DECISIONES,
+    AUTOGESTION_Y_DISCIPLINA,
+    PARTICIPACION_SOCIAL
+}

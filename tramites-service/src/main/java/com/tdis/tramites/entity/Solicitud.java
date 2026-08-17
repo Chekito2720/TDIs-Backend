@@ -1,6 +1,8 @@
 package com.tdis.tramites.entity;
 
 import com.tdis.common.enums.EstadoSolicitud;
+import com.tdis.common.enums.EjeFormativo;
+import com.tdis.common.enums.TipoLugar;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -135,6 +137,31 @@ public class Solicitud {
 
     @Column(name = "horas_estimadas", length = 20)
     private String horasEstimadas;
+
+    // Periodicidad y fechas para Solicitud Previa
+    @Column(name = "periodicidad", length = 20)
+    private String periodicidad;
+
+    @Column(name = "fecha_inicio", length = 50)
+    private String fechaInicio;
+
+    @Column(name = "fecha_fin", length = 50)
+    private String fechaFin;
+
+    // Campos de Actividad para PREVIA (para convertir a Actividad)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "eje", length = 30)
+    private EjeFormativo eje;
+
+    @Column(name = "puntos_tdi")
+    private Integer puntosTdi;
+
+    @Column(name = "horas_efectivas")
+    private Integer horasEfectivas;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_lugar", length = 20)
+    private TipoLugar tipoLugar;
 
     @Column(updatable = false)
     private LocalDateTime createdAt;

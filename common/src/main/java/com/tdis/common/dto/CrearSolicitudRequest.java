@@ -1,5 +1,7 @@
 package com.tdis.common.dto;
 
+import com.tdis.common.enums.EjeFormativo;
+import com.tdis.common.enums.TipoLugar;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,4 +46,14 @@ public class CrearSolicitudRequest {
     private String asistenciaEsperada;
     private String alumnosGeneranTdi;
     private String horasEstimadas;
+
+    // Periodicidad y fechas para Solicitud Previa
+    private String periodicidad;
+    private String fechaInicio;
+    private String fechaFin;
+
+    // Campos de Actividad para PREVIA (para que se convierta en Actividad)
+    private EjeFormativo eje;
+    private Integer horasEfectivas;
+    private TipoLugar tipoLugar;
 }

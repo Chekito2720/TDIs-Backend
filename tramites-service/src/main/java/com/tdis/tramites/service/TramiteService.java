@@ -6,6 +6,8 @@ import com.tdis.common.dto.CrearSolicitudRequest;
 import com.tdis.common.dto.RevisarSolicitudRequest;
 import com.tdis.common.dto.SolicitudDTO;
 import com.tdis.common.enums.EstadoSolicitud;
+import com.tdis.common.enums.EjeFormativo;
+import com.tdis.common.enums.TipoLugar;
 import com.tdis.common.exception.BadRequestException;
 import com.tdis.common.exception.ResourceNotFoundException;
 import com.tdis.common.dto.UsuarioDTO;
@@ -121,6 +123,17 @@ public class TramiteService {
         solicitud.setAsistenciaEsperada(request.getAsistenciaEsperada());
         solicitud.setAlumnosGeneranTdi(request.getAlumnosGeneranTdi());
         solicitud.setHorasEstimadas(request.getHorasEstimadas());
+        // Periodicidad y fechas para Solicitud Previa
+        solicitud.setPeriodicidad(request.getPeriodicidad());
+        solicitud.setFechaInicio(request.getFechaInicio());
+        solicitud.setFechaFin(request.getFechaFin());
+
+        // Campos de Actividad para PREVIA
+        if (esPrevia) {
+            solicitud.setEje(request.getEje());
+            solicitud.setHorasEfectivas(request.getHorasEfectivas());
+            solicitud.setTipoLugar(request.getTipoLugar());
+        }
 
         solicitud.setEstado(EstadoSolicitud.EN_REVISION);
 
@@ -247,7 +260,15 @@ public class TramiteService {
         dto.setAsistenciaEsperada(solicitud.getAsistenciaEsperada());
         dto.setAlumnosGeneranTdi(solicitud.getAlumnosGeneranTdi());
         dto.setHorasEstimadas(solicitud.getHorasEstimadas());
+        dto.setPeriodicidad(solicitud.getPeriodicidad());
+        dto.setFechaInicio(solicitud.getFechaInicio());
+        dto.setFechaFin(solicitud.getFechaFin());
         dto.setNombreActividad(solicitud.getNombreActividad());
+        // Campos de Actividad para PREVIA
+        dto.setEje(solicitud.getEje());
+        dto.setPuntosTdi(solicitud.getPuntosTdi());
+        dto.setHorasEfectivas(solicitud.getHorasEfectivas());
+        dto.setTipoLugar(solicitud.getTipoLugar());
         dto.setCreatedAt(solicitud.getCreatedAt());
         dto.setUpdatedAt(solicitud.getUpdatedAt());
 

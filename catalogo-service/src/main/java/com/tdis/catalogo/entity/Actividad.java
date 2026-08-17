@@ -1,8 +1,15 @@
 package com.tdis.catalogo.entity;
 
+import com.tdis.common.enums.AsignaturaFormacion;
+import com.tdis.common.enums.CompetenciaReforzada;
+import com.tdis.common.enums.DimensionFormacion;
 import com.tdis.common.enums.EjeFormativo;
 import com.tdis.common.enums.EstadoRevision;
+import com.tdis.common.enums.NivelImpacto;
 import com.tdis.common.enums.Periodicidad;
+import com.tdis.common.enums.PublicoObjetivo;
+import com.tdis.common.enums.TipoEvidenciaRequerida;
+import com.tdis.common.enums.TipoLugar;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,6 +52,32 @@ public class Actividad {
 
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
+
+    @Column(name = "horas_efectivas")
+    private Integer horasEfectivas;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "lugar", length = 20)
+    private TipoLugar lugar;
+
+    @Column(name = "dimensiones_formacion", columnDefinition = "TEXT")
+    private String dimensionesFormacion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nivel_impacto", length = 20)
+    private NivelImpacto nivelImpacto;
+
+    @Column(name = "publico_objetivo", columnDefinition = "TEXT")
+    private String publicoObjetivo;
+
+    @Column(name = "asignaturas_relacionadas", columnDefinition = "TEXT")
+    private String asignaturasRelacionadas;
+
+    @Column(name = "competencias_reforzar", columnDefinition = "TEXT")
+    private String competenciasReforzar;
+
+    @Column(name = "tipos_evidencia_requerida", columnDefinition = "TEXT")
+    private String tiposEvidenciaRequerida;
 
     @Column(nullable = false)
     private Boolean activa = true;
