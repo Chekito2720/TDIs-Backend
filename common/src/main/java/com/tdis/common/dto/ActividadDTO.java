@@ -44,6 +44,7 @@ public class ActividadDTO {
     private UUID creadorId;
     private String creadorNombre;
     private String creadorTipo;
+    private String area;
     private String comentarioRevision;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -92,6 +92,9 @@ public class Actividad {
     @Column(name = "creador_tipo", length = 20)
     private String creadorTipo;
 
+    @Column(name = "area", length = 100)
+    private String area;
+
     @Column(name = "comentario_revision", columnDefinition = "TEXT")
     private String comentarioRevision;
 

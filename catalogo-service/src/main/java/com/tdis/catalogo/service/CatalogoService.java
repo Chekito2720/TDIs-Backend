@@ -188,6 +188,7 @@ public class CatalogoService {
         actividad.setTiposEvidenciaRequerida(enumListToString(dto.getTiposEvidenciaRequerida()));
         actividad.setCreadorId(dto.getCreadorId());
         actividad.setCreadorTipo(dto.getCreadorTipo());
+        actividad.setArea(dto.getArea());
     }
 
     private String enumListToString(List<? extends Enum<?>> list) {
@@ -254,6 +255,7 @@ public class CatalogoService {
         dto.setEstadoRevision(actividad.getEstadoRevision());
         dto.setCreadorId(actividad.getCreadorId());
         dto.setCreadorTipo(actividad.getCreadorTipo());
+        dto.setArea(actividad.getArea());
         dto.setComentarioRevision(actividad.getComentarioRevision());
         dto.setCreatedAt(actividad.getCreatedAt());
         dto.setUpdatedAt(actividad.getUpdatedAt());
@@ -300,7 +302,7 @@ public class CatalogoService {
             String enumValue;
             if ("Solo alumnas".equals(trimmed)) enumValue = "SOLO_ALUMNAS";
             else if ("Solo alumnos".equals(trimmed)) enumValue = "SOLO_ALUMNOS";
-            else if ("Solo División Industrial".equals(trimmed)) enumValue = "SOLO_DIVISION_INDUSTRIAL";
+            else if ("Solo División Industrial".equals(trimmed)) enumValue = "SOLO_DIVISION_INDUSTRIAL_Y_NANOTECNOLOGIA";
             else if ("Solo División Económica-Administrativa".equals(trimmed)) enumValue = "SOLO_DIVISION_ECONOMICO_ADMINISTRATIVA";
             else if ("Solo División Tecnologías".equals(trimmed)) enumValue = "SOLO_DIVISION_TECNOLOGIAS";
             else if ("Solo División Idiomas".equals(trimmed)) enumValue = "SOLO_DIVISION_IDIOMAS";
@@ -396,7 +398,7 @@ public class CatalogoService {
         if (value == null) return null;
         if ("Solo alumnas".equals(value)) return PublicoObjetivo.SOLO_ALUMNAS;
         if ("Solo alumnos".equals(value)) return PublicoObjetivo.SOLO_ALUMNOS;
-        if ("Solo División Industrial".equals(value)) return PublicoObjetivo.SOLO_DIVISION_INDUSTRIAL;
+        if ("Solo División Industrial".equals(value)) return PublicoObjetivo.SOLO_DIVISION_INDUSTRIAL_Y_NANOTECNOLOGIA;
         if ("Solo División Económica-Administrativa".equals(value)) return PublicoObjetivo.SOLO_DIVISION_ECONOMICO_ADMINISTRATIVA;
         if ("Solo División Tecnologías".equals(value)) return PublicoObjetivo.SOLO_DIVISION_TECNOLOGIAS;
         if ("Solo División Idiomas".equals(value)) return PublicoObjetivo.SOLO_DIVISION_IDIOMAS;

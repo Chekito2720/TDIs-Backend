@@ -6,6 +6,7 @@ import com.tdis.common.dto.RegisterInternoRequest;
 import com.tdis.common.dto.RegisterRequest;
 import com.tdis.common.dto.RegisterExternoRequest;
 import com.tdis.common.dto.UsuarioDTO;
+import com.tdis.common.enums.Division;
 import com.tdis.common.enums.TipoUsuario;
 import com.tdis.common.exception.BadRequestException;
 import com.tdis.common.exception.ResourceNotFoundException;
@@ -215,6 +216,7 @@ public class UsuarioService {
                 usuario.getNombre(),
                 usuario.getApellidos(),
                 usuario.getTipoUsuario(),
+                usuario.getDivisiones(),
                 usuario.getActivo()
         );
     }
