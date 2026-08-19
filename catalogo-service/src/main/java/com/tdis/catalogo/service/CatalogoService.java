@@ -70,6 +70,9 @@ public class CatalogoService {
     }
 
     public ActividadDTO crear(ActividadDTO dto) {
+        if (actividadRepository.existsByTituloIgnoreCase(dto.getTitulo())) {
+            throw new BadRequestException("Ya existe una actividad con ese nombre");
+        }
         Actividad actividad = new Actividad();
         mapDTOToEntity(dto, actividad);
         actividad.setActiva(false);
@@ -81,6 +84,9 @@ public class CatalogoService {
     public ActividadDTO actualizar(UUID id, ActividadDTO dto) {
         Actividad actividad = actividadRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Actividad no encontrada"));
+        if (actividadRepository.existsByTituloIgnoreCaseAndIdNot(dto.getTitulo(), id)) {
+            throw new BadRequestException("Ya existe otra actividad con ese nombre");
+        }
         mapDTOToEntity(dto, actividad);
         actividad = actividadRepository.save(actividad);
         return toDTO(actividad);
@@ -180,22 +186,22 @@ public class CatalogoService {
         actividad.setFechaFin(dto.getFechaFin());
         actividad.setHorasEfectivas(dto.getHorasEfectivas());
         actividad.setLugar(dto.getLugar());
-        actividad.setDimensionesFormacion(enumListToString(dto.getDimensionesFormacion()));
+        actividad.setDimensionesFormacion(stringListToString(dto.getDimensionesFormacion()));
         actividad.setNivelImpacto(dto.getNivelImpacto());
-        actividad.setPublicoObjetivo(enumListToString(dto.getPublicoObjetivo()));
-        actividad.setAsignaturasRelacionadas(enumListToString(dto.getAsignaturasRelacionadas()));
-        actividad.setCompetenciasReforzar(enumListToString(dto.getCompetenciasReforzar()));
-        actividad.setTiposEvidenciaRequerida(enumListToString(dto.getTiposEvidenciaRequerida()));
+        actividad.setPublicoObjetivo(stringListToString(dto.getPublicoObjetivo()));
+        actividad.setAsignaturasRelacionadas(stringListToString(dto.getAsignaturasRelacionadas()));
+        actividad.setCompetenciasReforzar(stringListToString(dto.getCompetenciasReforzar()));
+        actividad.setTiposEvidenciaRequerida(stringListToString(dto.getTiposEvidenciaRequerida()));
         actividad.setCreadorId(dto.getCreadorId());
         actividad.setCreadorTipo(dto.getCreadorTipo());
         actividad.setArea(dto.getArea());
+        actividad.setNombreResponsable(dto.getNombreResponsable());
+        actividad.setTelefonoResponsable(dto.getTelefonoResponsable());
     }
 
-    private String enumListToString(List<? extends Enum<?>> list) {
+    private String stringListToString(List<String> list) {
         if (list == null || list.isEmpty()) return null;
-        return list.stream()
-                .map(Enum::name)
-                .collect(Collectors.joining(","));
+        return String.join(",", list);
     }
 
     private <E extends Enum<E>> List<E> stringToEnumList(String value, Class<E> enumClass) {
@@ -245,21 +251,31 @@ public class CatalogoService {
         dto.setFechaFin(actividad.getFechaFin());
         dto.setHorasEfectivas(actividad.getHorasEfectivas());
         dto.setLugar(actividad.getLugar());
-        dto.setDimensionesFormacion(stringToEnumList(actividad.getDimensionesFormacion(), DimensionFormacion.class));
+        dto.setDimensionesFormacion(stringToList(actividad.getDimensionesFormacion()));
         dto.setNivelImpacto(actividad.getNivelImpacto());
-        dto.setPublicoObjetivo(stringToEnumList(actividad.getPublicoObjetivo(), PublicoObjetivo.class));
-        dto.setAsignaturasRelacionadas(stringToEnumList(actividad.getAsignaturasRelacionadas(), AsignaturaFormacion.class));
-        dto.setCompetenciasReforzar(stringToEnumList(actividad.getCompetenciasReforzar(), CompetenciaReforzada.class));
-        dto.setTiposEvidenciaRequerida(stringToEnumList(actividad.getTiposEvidenciaRequerida(), TipoEvidenciaRequerida.class));
+        dto.setPublicoObjetivo(stringToList(actividad.getPublicoObjetivo()));
+        dto.setAsignaturasRelacionadas(stringToList(actividad.getAsignaturasRelacionadas()));
+        dto.setCompetenciasReforzar(stringToList(actividad.getCompetenciasReforzar()));
+        dto.setTiposEvidenciaRequerida(stringToList(actividad.getTiposEvidenciaRequerida()));
         dto.setActiva(actividad.getActiva());
         dto.setEstadoRevision(actividad.getEstadoRevision());
         dto.setCreadorId(actividad.getCreadorId());
         dto.setCreadorTipo(actividad.getCreadorTipo());
         dto.setArea(actividad.getArea());
+        dto.setNombreResponsable(actividad.getNombreResponsable());
+        dto.setTelefonoResponsable(actividad.getTelefonoResponsable());
         dto.setComentarioRevision(actividad.getComentarioRevision());
         dto.setCreatedAt(actividad.getCreatedAt());
         dto.setUpdatedAt(actividad.getUpdatedAt());
         return dto;
+    }
+
+    private List<String> stringToList(String value) {
+        if (value == null || value.isBlank()) return List.of();
+        return Arrays.stream(value.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
     }
 
     private NivelImpacto parseNivelImpacto(String value) {
@@ -267,10 +283,10 @@ public class CatalogoService {
         try {
             return NivelImpacto.valueOf(value);
         } catch (IllegalArgumentException e) {
-            if ("Explorador (conoce)".equals(value)) return NivelImpacto.EXPLORADOR;
-            if ("Promotor (participa)".equals(value)) return NivelImpacto.PROMOTOR;
-            if ("Líder (hace)".equals(value)) return NivelImpacto.LIDER;
-            if ("Embajador (Lidera)".equals(value)) return NivelImpacto.EMBAJADOR;
+            if ("Sensibilizador (solo escucha)".equals(value)) return NivelImpacto.SENSIBILIZADOR;
+            if ("Formativo (intercambio de ideas)".equals(value)) return NivelImpacto.FORMATIVO;
+            if ("Aplicación (participación activa)".equals(value)) return NivelImpacto.APLICACION;
+            if ("Implementador (dirige)".equals(value)) return NivelImpacto.IMPLEMENTADOR;
             return null;
         }
     }

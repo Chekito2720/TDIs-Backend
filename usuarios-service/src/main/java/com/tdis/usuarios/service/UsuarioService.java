@@ -85,6 +85,11 @@ public class UsuarioService {
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setActivo(true);
 
+        if (request.getDivision() != null && !request.getDivision().isBlank()) {
+            String divisionNormalizada = normalizarDivision(request.getDivision());
+            usuario.setDivisiones(List.of(Division.valueOf(divisionNormalizada)));
+        }
+
         usuario = usuarioRepository.save(usuario);
 
         String token = jwtTokenProvider.generateToken(usuario.getId(), usuario.getTipoUsuario());
@@ -219,5 +224,18 @@ public class UsuarioService {
                 usuario.getDivisiones(),
                 usuario.getActivo()
         );
+    }
+
+    private String normalizarDivision(String division) {
+        return division.toUpperCase()
+                .replace("Á", "A")
+                .replace("É", "E")
+                .replace("Í", "I")
+                .replace("Ó", "O")
+                .replace("Ú", "U")
+                .replace("Ñ", "N")
+                .replace(" ", "_")
+                .replace("-", "_")
+                .replace("INDUSTRIAL", "INDUSTRIAL_Y_NANOTECNOLOGIA");
     }
 }
